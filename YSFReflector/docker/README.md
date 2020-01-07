@@ -9,7 +9,7 @@ The `Dockerfile` here is intended to produce an image which will be stored on [D
 
 # Usage
 
-`docker run -e REFLECTOR_NAME=YOUR_NAME_HERE -eREFLECTOR_DESCRIPTION=YOUR_DESCRIPTION_HERE -p 42000:42000/udp neilbartley/ysfreflector:latest`
+`docker run -e REFLECTOR_NAME="YOUR_NAME_HERE" -e REFLECTOR_DESCRIPTION="YOUR_DESCRIPTION_HERE" -p 42000:42000/udp --name=ysfreflector neilbartley/ysfreflector:latest`
 
 # How to build
 
