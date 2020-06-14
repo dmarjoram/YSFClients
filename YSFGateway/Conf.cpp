@@ -31,11 +31,11 @@ enum SECTION {
   SECTION_GENERAL,
   SECTION_INFO,
   SECTION_LOG,
-  SECTION_APRS_FI,
+  SECTION_APRS,
   SECTION_NETWORK,
   SECTION_YSF_NETWORK,
   SECTION_FCS_NETWORK,
-  SECTION_MOBILE_GPS,
+  SECTION_GPSD,
   SECTION_REMOTE_COMMANDS
 };
 
@@ -50,6 +50,7 @@ m_myAddress(),
 m_myPort(0U),
 m_wiresXMakeUpper(true),
 m_wiresXCommandPassthrough(false),
+m_debug(false),
 m_daemon(false),
 m_rxFrequency(0U),
 m_txFrequency(0U),
@@ -64,9 +65,8 @@ m_logFileLevel(0U),
 m_logFilePath(),
 m_logFileRoot(),
 m_aprsEnabled(false),
-m_aprsServer(),
+m_aprsAddress(),
 m_aprsPort(0U),
-m_aprsPassword(),
 m_aprsSuffix(),
 m_aprsDescription(),
 m_networkStartup(),
@@ -88,9 +88,9 @@ m_ysfNetworkYSF2P25Port(0U),
 m_fcsNetworkEnabled(false),
 m_fcsNetworkFile(),
 m_fcsNetworkPort(0U),
-m_mobileGPSEnabled(false),
-m_mobileGPSAddress(),
-m_mobileGPSPort(0U),
+m_gpsdEnabled(false),
+m_gpsdAddress(),
+m_gpsdPort(),
 m_remoteCommandsEnabled(false),
 m_remoteCommandsPort(6073U)
 {
@@ -122,16 +122,16 @@ bool CConf::read()
 		  section = SECTION_INFO;
 	  else if (::strncmp(buffer, "[Log]", 5U) == 0)
 		  section = SECTION_LOG;
-	  else if (::strncmp(buffer, "[aprs.fi]", 9U) == 0)
-		  section = SECTION_APRS_FI;
+	  else if (::strncmp(buffer, "[APRS]", 6U) == 0)
+		  section = SECTION_APRS;
 	  else if (::strncmp(buffer, "[Network]", 9U) == 0)
 		  section = SECTION_NETWORK;
 	  else if (::strncmp(buffer, "[YSF Network]", 13U) == 0)
 		  section = SECTION_YSF_NETWORK;
 	  else if (::strncmp(buffer, "[FCS Network]", 13U) == 0)
 		  section = SECTION_FCS_NETWORK;
-	  else if (::strncmp(buffer, "[Mobile GPS]", 12U) == 0)
-		  section = SECTION_MOBILE_GPS;
+	  else if (::strncmp(buffer, "[GPSD]", 6U) == 0)
+		  section = SECTION_GPSD;
 	  else if (::strncmp(buffer, "[Remote Commands]", 17U) == 0)
 		  section = SECTION_REMOTE_COMMANDS;
 	  else
@@ -170,6 +170,8 @@ bool CConf::read()
 			m_wiresXMakeUpper = ::atoi(value) == 1;
 		else if (::strcmp(key, "WiresXCommandPassthrough") == 0)
 			m_wiresXCommandPassthrough = ::atoi(value) == 1;
+		else if (::strcmp(key, "Debug") == 0)
+			m_debug = ::atoi(value) == 1;
 		else if (::strcmp(key, "Daemon") == 0)
 			m_daemon = ::atoi(value) == 1;
 	} else if (section == SECTION_INFO) {
@@ -198,15 +200,13 @@ bool CConf::read()
 			m_logFileLevel = (unsigned int)::atoi(value);
 		else if (::strcmp(key, "DisplayLevel") == 0)
 			m_logDisplayLevel = (unsigned int)::atoi(value);
-	} else if (section == SECTION_APRS_FI) {
+	} else if (section == SECTION_APRS) {
 		if (::strcmp(key, "Enable") == 0)
 			m_aprsEnabled = ::atoi(value) == 1;
-		else if (::strcmp(key, "Server") == 0)
-			m_aprsServer = value;
+		else if (::strcmp(key, "Address") == 0)
+			m_aprsAddress = value;
 		else if (::strcmp(key, "Port") == 0)
 			m_aprsPort = (unsigned int)::atoi(value);
-		else if (::strcmp(key, "Password") == 0)
-			m_aprsPassword = value;
 		else if (::strcmp(key, "Suffix") == 0)
 			m_aprsSuffix = value;
 		else if (::strcmp(key, "Description") == 0)
@@ -252,13 +252,13 @@ bool CConf::read()
 			m_fcsNetworkFile = value;
 		else if (::strcmp(key, "Port") == 0)
 			m_fcsNetworkPort = (unsigned int)::atoi(value);
-	} else if (section == SECTION_MOBILE_GPS) {
+	} else if (section == SECTION_GPSD) {
 		if (::strcmp(key, "Enable") == 0)
-			m_mobileGPSEnabled = ::atoi(value) == 1;
+			m_gpsdEnabled = ::atoi(value) == 1;
 		else if (::strcmp(key, "Address") == 0)
-			m_mobileGPSAddress = value;
+			m_gpsdAddress = value;
 		else if (::strcmp(key, "Port") == 0)
-			m_mobileGPSPort = (unsigned int)::atoi(value);
+			m_gpsdPort = value;
 	} else if (section == SECTION_REMOTE_COMMANDS) {
 		if (::strcmp(key, "Enable") == 0)
 			m_remoteCommandsEnabled = ::atoi(value) == 1;
@@ -315,6 +315,11 @@ bool CConf::getWiresXMakeUpper() const
 bool CConf::getWiresXCommandPassthrough() const
 {
 	return m_wiresXCommandPassthrough;
+}
+
+bool CConf::getDebug() const
+{
+	return m_debug;
 }
 
 bool CConf::getDaemon() const
@@ -387,19 +392,14 @@ bool CConf::getAPRSEnabled() const
 	return m_aprsEnabled;
 }
 
-std::string CConf::getAPRSServer() const
+std::string CConf::getAPRSAddress() const
 {
-	return m_aprsServer;
+	return m_aprsAddress;
 }
 
 unsigned int CConf::getAPRSPort() const
 {
 	return m_aprsPort;
-}
-
-std::string CConf::getAPRSPassword() const
-{
-	return m_aprsPassword;
 }
 
 std::string CConf::getAPRSSuffix() const
@@ -508,19 +508,19 @@ unsigned int CConf::getFCSNetworkPort() const
 	return m_fcsNetworkPort;
 }
 
-bool CConf::getMobileGPSEnabled() const
+bool CConf::getGPSDEnabled() const
 {
-	return m_mobileGPSEnabled;
+	return m_gpsdEnabled;
 }
 
-std::string CConf::getMobileGPSAddress() const
+std::string CConf::getGPSDAddress() const
 {
-	return m_mobileGPSAddress;
+	return m_gpsdAddress;
 }
 
-unsigned int CConf::getMobileGPSPort() const
+std::string CConf::getGPSDPort() const
 {
-	return m_mobileGPSPort;
+	return m_gpsdPort;
 }
 
 bool CConf::getRemoteCommandsEnabled() const

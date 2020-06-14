@@ -454,12 +454,12 @@ void CYSFGateway::createGPS()
 	if (!m_conf.getAPRSEnabled())
 		return;
 
-	std::string hostname = m_conf.getAPRSServer();
-	unsigned int port    = m_conf.getAPRSPort();
-	std::string password = m_conf.getAPRSPassword();
-	std::string suffix   = m_conf.getAPRSSuffix();
+	std::string address = m_conf.getAPRSAddress();
+	unsigned int port   = m_conf.getAPRSPort();
+	std::string suffix  = m_conf.getAPRSSuffix();
+	bool debug          = m_conf.getDebug();
 
-	m_writer = new CAPRSWriter(m_callsign, m_suffix, password, hostname, port, suffix);
+	m_writer = new CAPRSWriter(m_callsign, m_suffix, address, port, suffix, debug);
 
 	unsigned int txFrequency = m_conf.getTxFrequency();
 	unsigned int rxFrequency = m_conf.getRxFrequency();
@@ -467,12 +467,12 @@ void CYSFGateway::createGPS()
 
 	m_writer->setInfo(txFrequency, rxFrequency, desc);
 
-	bool enabled = m_conf.getMobileGPSEnabled();
+	bool enabled = m_conf.getGPSDEnabled();
 	if (enabled) {
-		std::string address = m_conf.getMobileGPSAddress();
-		unsigned int port   = m_conf.getMobileGPSPort();
+		std::string address = m_conf.getGPSDAddress();
+		std::string port    = m_conf.getGPSDPort();
 
-		m_writer->setMobileLocation(address, port);
+		m_writer->setGPSDLocation(address, port);
 	} else {
 		float latitude  = m_conf.getLatitude();
 		float longitude = m_conf.getLongitude();

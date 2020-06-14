@@ -39,6 +39,7 @@ public:
   unsigned int getMyPort() const;
   bool         getWiresXMakeUpper() const;
   bool         getWiresXCommandPassthrough() const;
+  bool         getDebug() const;
   bool         getDaemon() const;
 
   // The Info section
@@ -57,11 +58,10 @@ public:
   std::string  getLogFilePath() const;
   std::string  getLogFileRoot() const;
 
-  // The aprs.fi section
+  // The APRS section
   bool         getAPRSEnabled() const;
-  std::string  getAPRSServer() const;
+  std::string  getAPRSAddress() const;
   unsigned int getAPRSPort() const;
-  std::string  getAPRSPassword() const;
   std::string  getAPRSSuffix() const;
   std::string  getAPRSDescription() const;
 
@@ -90,10 +90,10 @@ public:
   std::string  getFCSNetworkFile() const;
   unsigned int getFCSNetworkPort() const;
 
-  // The Mobile GPS section
-  bool         getMobileGPSEnabled() const;
-  std::string  getMobileGPSAddress() const;
-  unsigned int getMobileGPSPort() const;
+  // The GPSD section
+  bool         getGPSDEnabled() const;
+  std::string  getGPSDAddress() const;
+  std::string  getGPSDPort() const;
 
   // The Remote Commands section
   bool         getRemoteCommandsEnabled() const;
@@ -110,6 +110,7 @@ private:
   unsigned int m_myPort;
   bool         m_wiresXMakeUpper;
   bool         m_wiresXCommandPassthrough;
+  bool         m_debug;
   bool         m_daemon;
 
   unsigned int m_rxFrequency;
@@ -127,9 +128,8 @@ private:
   std::string  m_logFileRoot;
 
   bool         m_aprsEnabled;
-  std::string  m_aprsServer;
+  std::string  m_aprsAddress;
   unsigned int m_aprsPort;
-  std::string  m_aprsPassword;
   std::string  m_aprsSuffix;
   std::string  m_aprsDescription;
 
@@ -155,9 +155,9 @@ private:
   std::string  m_fcsNetworkFile;
   unsigned int m_fcsNetworkPort;
 
-  bool         m_mobileGPSEnabled;
-  std::string  m_mobileGPSAddress;
-  unsigned int m_mobileGPSPort;
+  bool         m_gpsdEnabled;
+  std::string  m_gpsdAddress;
+  std::string  m_gpsdPort;
 
   bool         m_remoteCommandsEnabled;
   unsigned int m_remoteCommandsPort;
