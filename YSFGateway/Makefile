@@ -22,6 +22,9 @@ YSFGateway:	$(OBJECTS)
 %.o: %.cpp
 		$(CXX) $(CFLAGS) -c -o $@ $<
 
+install:
+		install -m 755 YSFGateway /usr/local/bin/
+
 clean:
 		$(RM) YSFGateway *.o *.d *.bak *~
  
