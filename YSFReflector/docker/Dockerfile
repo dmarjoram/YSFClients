@@ -33,7 +33,7 @@ ENV APACHE_RUN_USER www-data
 ENV APACHE_RUN_GROUP www-data
 ENV APACHE_LOG_DIR /var/log/apache2
 ENV APACHE_PID_FILE=/var/run/apache2-ysfdashboard.pid
-ENV REFLECTOR_LOGPATH=/var/log/
+ENV REFLECTOR_LOGPATH=\/var\/log\/
 
 RUN apt-get update && \
     mkdir -p ${APACHE_RUN_DIR} && \
