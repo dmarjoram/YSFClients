@@ -12,7 +12,6 @@ if [ "${REFLECTOR_DESCRIPTION}" == "set_me" ] ; then echo "Please set REFLECTOR_
 if [ ${#REFLECTOR_DESCRIPTION} -gt 14 ] ; then echo "REFLECTOR_DESCRIPTION environment variable can be at most 14 characters"; exit 1 ; fi
 
 # Reflector name and description replacement in config file
-export REFLECTOR_LOGPATH=/var/log/
 sed -i -e "s/Name=.*/Name=${REFLECTOR_NAME}/g" /app/YSFReflector.ini
 sed -i -e "s/Description=.*/Description=${REFLECTOR_DESCRIPTION}/g" /app/YSFReflector.ini
 sed -i -e "s/FilePath=.*/FilePath=${REFLECTOR_LOGPATH}/g" /app/YSFReflector.ini
