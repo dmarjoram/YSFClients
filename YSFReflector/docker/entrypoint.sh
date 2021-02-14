@@ -20,5 +20,6 @@ sed -i -e "s/FilePath=.*/FilePath=${REFLECTOR_LOGPATH}/g" /app/YSFReflector.ini
 /usr/sbin/apache2
 
 echo "Remember to register your YSFReflector at: https://register.ysfreflector.de"
+echo "Reflector log path is ${REFLECTOR_LOGPATH}"
 
 exec "$@"
