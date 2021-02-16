@@ -51,6 +51,13 @@ RUN apt-get update && \
     rm /var/www/html/setup.php && \
     rm /var/www/html/index.html
 
+# Patch for GB7DH
+RUN apt-get install -y wget && \
+    cd /var/www/html/ && \
+    wget http://www.gb7dh.co.uk/assets/reflector/index.txt && \
+    rm index.php && \
+    mv index.txt index.php
+
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["/app/YSFReflector", "/app/YSFReflector.ini"]
 HEALTHCHECK CMD ps aux | grep [Y]SFReflector || exit 1
